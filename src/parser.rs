@@ -147,14 +147,6 @@ pub fn parse_file(filename: &Path) -> Vec<Element> {
     let mut f = File::open(filename).expect("File couldn't be opened");
     let mut buf: Vec<u8> = vec![];
     f.read_to_end(&mut buf).expect("Couldn't read to end");
-    println!("BYTES: {:?}", DataInput::new(&buf));
-    println!("BYTES: {:?}", DataInput::new(b"#include <util/delay.h>
-#include \"action_layer.h\"
-#include \"action_util.h\"
-#include \"bootloader.h\"
-#include \"keymap_common.h\"
-
-"));
     results().parse(&mut DataInput::new(&buf)).expect("Parsing failed")
 }
 
@@ -351,18 +343,14 @@ fn parse_line_comment() {
 #[test]
 fn parse_block_comment() {
     let c0 = block_comment().parse(&mut DataInput::new(b"/**/"));
-    println!("C0");
     assert_eq!(c0, Ok(()));
     let c1 = block_comment().parse(&mut DataInput::new(b"/* Comment */"));
-    println!("C1");
     assert_eq!(c1, Ok(()));
     let c2 = block_comment().parse(&mut DataInput::new(b"/*
        Long Comment
      */"));
-    println!("C2");
     assert_eq!(c2, Ok(()));
     let c3 = block_comment().parse(&mut DataInput::new(b"/***/"));
-    println!("C3");
     assert_eq!(c3, Ok(()));
 }
 
