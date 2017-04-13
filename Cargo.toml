@@ -6,4 +6,3 @@ authors = ["Ben Beckwith <bnbeckwith@gmail.com>"]
 [dependencies]
 clap="2.*"
 pom="1.*"
-regex="*"

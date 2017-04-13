@@ -1,6 +1,5 @@
 extern crate clap;
 extern crate pom;
-extern crate regex;
 
 use clap::{Arg, App};
 
