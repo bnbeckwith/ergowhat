@@ -1,10 +1,14 @@
 extern crate clap;
 extern crate pom;
+extern crate svg;
 
 use clap::{Arg, App};
 
+mod types;
 mod parser;
+mod image;
 
+use image::*;
 use parser::*;
 use std::path::Path;
 
@@ -26,8 +30,9 @@ fn main() {
         .get_matches();
 
     let keymap_file = matches.value_of("FILE").unwrap();
-    let output_file = matches.value_of("OUTPUT").unwrap_or("keymap.png");
+    let output_file = matches.value_of("OUTPUT").unwrap_or("keymap.svg");
 
-    let elements = parse_file(&Path::new(keymap_file));
-    println!("{:?}", elements);
+    let (kms,am) = parse_file(&Path::new(keymap_file));
+
+    Keyboard::new(kms,am).draw(output_file);
 }

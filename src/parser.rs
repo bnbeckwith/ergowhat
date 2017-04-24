@@ -8,30 +8,7 @@ use std::io::prelude::*;
 
 use std::collections::HashMap;
 
-#[derive(Debug, PartialEq)]
-pub enum Key {
-    Fx(u64),
-    Key(String)
-}
-
-#[derive(Debug, PartialEq)]
-pub enum Action{
-    Function(Key),
-    FunctionTap(Key),
-    LayerSet(u64, String),
-    LayerMomentary(u64),
-    LayerTapKey(u64, Key),
-    ModsKey(Key, Key),
-    ModsTapKey(Key, Key)
-}
-
-type ActionMap = HashMap<u64, Action>;
-
-#[derive(Debug, PartialEq)]
-pub enum Element {
-    Maps(Vec<Vec<Key>>),
-    Actions(ActionMap)
-}
+use types::*;
 
 fn space() -> Parser<u8, ()> {
 	one_of(b" \t\r\n").repeat(1..).discard()
@@ -134,49 +111,16 @@ fn actions() -> Parser<u8, ActionMap> {
     actions.map(|members| members.into_iter().collect::<HashMap<_,_>>())
 }
 
-fn element() -> Parser<u8, Element> {
-    keymaps().name("KEYMAPS").map(|m| Element::Maps(m))
-        | actions().name("ACTIONS").map(|a| Element::Actions(a))
-}
-
-fn results() -> Parser<u8, Vec<Element>> {
-    ((!element() * skip(1)).repeat(0..).name("SKIPPY") * element()).repeat(1..).name("RESULTS")
-}
-
-pub fn parse_file(filename: &Path) -> Vec<Element> {
+pub fn parse_file(filename: &Path) -> (KeyMapVec, ActionMap) {
     let mut f = File::open(filename).expect("File couldn't be opened");
     let mut buf: Vec<u8> = vec![];
     f.read_to_end(&mut buf).expect("Couldn't read to end");
-    results().parse(&mut DataInput::new(&buf)).expect("Parsing failed")
-}
-
-#[test]
-fn parse_results() {
-    let es = results().parse(&mut DataInput::new(b"#include <util/delay.h>
-#include \"action_layer.h\"
-#include \"action_util.h\"
-#include \"bootloader.h\"
-#include \"keymap_common.h\"
-
-fn_actions[] = {,
-};"));
-    let hm: ActionMap = HashMap::new();
-    assert_eq!(es, Ok(vec![Element::Actions(hm)]));
-    let es = results().parse(&mut DataInput::new(b"/* comment */ fn_actions[] = {}; //line comment \n"));
-    let hm: ActionMap = HashMap::new();
-    assert_eq!(es, Ok(vec![Element::Actions(hm)]));
-    let es = results().parse(&mut DataInput::new(b"/* comment */ fn_actions[] = {,}; //line comment \n keymaps[][MATRIX_ROWS][MATRIX_COLS] = {,};"));
-    let hm: ActionMap = HashMap::new();
-    assert_eq!(es, Ok(vec![Element::Actions(hm), Element::Maps(vec![])]));
-}
-
-#[test]
-fn parse_element() {
-    let el = element().parse(&mut DataInput::new(b"fn_actions[] = {};"));
-    let hm: ActionMap = HashMap::new();
-    assert_eq!(el, Ok(Element::Actions(hm)));
-    let el = element().parse(&mut DataInput::new(b"keymaps[][MATRIX_ROWS][MATRIX_COLS] = {};"));
-    assert_eq!(el, Ok(Element::Maps(vec![])));
+    let km = (!keymaps() * skip(1)).repeat(0..) * keymaps();
+    let act = (!actions() * skip(1)).repeat(0..) * actions();
+    let mut input = DataInput::new(&buf);
+    
+    (km.parse(&mut input).expect("Parsing keymaps failed"),
+     act.parse(&mut input).expect("Parsing actions failed"))
 }
 
 #[test]
