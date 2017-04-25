@@ -349,6 +349,7 @@ impl Keyboard {
             .add(self.left(layer))
             .add(self.right(layer))
             .set("id", format!("layer{}", layer))
+            .set("visibility", "hidden")
     }
     
     fn keymap(self: &Keyboard) -> Group {
