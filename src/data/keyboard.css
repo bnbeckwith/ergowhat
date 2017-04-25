@@ -1,41 +1,12 @@
 
-.TRNS {
+#TRNS {
     visibility: hidden;
 }
 
-
-#layer1,
-#layer2,
-#layer3,
-#layer4,
-#layer5,
-#layer6,
-#layer7,
-#layer8,
-#layer9,
-#layer10,
-#layer11,
-#layer12,
-#layer13,
-#layer14,
-#layer15,
-#layer16,
-#layer17,
-#layer18,
-#layer19,
-#layer20,
-#layer21,
-#layer22,
-#layer23,
-#layer24,
-#layer25,
-#layer26,
-#layer27,
-#layer28,
-#layer29,
-#layer30,
-#layer31
-{
-    visibility: hidden;
+text {
+    text-anchor: middle;
 }
 
+#~L1 {
+    text-anchor: right;
+}
