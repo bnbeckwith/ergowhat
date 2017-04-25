@@ -10,7 +10,17 @@ pub struct Keyboard {
     actions: ActionMap
 }
 
-fn drawkey(width: f64, height: f64) -> Group {    
+fn drawkey(width: f64, height: f64) -> Group {
+    let background = Rectangle::new()
+        .set("x", 1)
+        .set("y", 1)
+        .set("width", width-2.0)
+        .set("height", height-2.0)
+        .set("rx", 15)
+        .set("ry", 15)
+        .set("stroke","white")
+        .set("fill","white");
+    
     let outside = Rectangle::new()
         .set("x", 1)
         .set("y", 1)
@@ -32,18 +42,11 @@ fn drawkey(width: f64, height: f64) -> Group {
         .set("fill", "url(#keyinside)");
     
     Group::new()
+        .add(background)
         .add(outside)
         .add(inside)
  }
 
-fn key10u(keycode: &Key) -> Group
-{ drawkey(100.0, 100.0)}
-fn key15h(keycode: &Key) -> Group
-{ drawkey(150.0, 100.0)}
-fn key20v(keycode: &Key) -> Group
-{ drawkey(100.0, 200.0)}
-fn key15v(keycode: &Key) -> Group
-{ drawkey(100.0, 150.0)}
 
 pub enum KeyShape {
     K10u,
@@ -51,15 +54,107 @@ pub enum KeyShape {
     K20v,
     K15v
 }
+macro_rules! makeKeyGroup {
+    ($key:path, $code:expr, $x:expr, $y:expr) => {
+        {
+            let (w,h) = match $key {
+                KeyShape::K10u => (100.0, 100.0),
+                KeyShape::K15h => (150.0, 100.0),
+                KeyShape::K15v => (100.0, 150.0),
+                KeyShape::K20v => (100.0, 200.0)
+            };
+
+            drawkey(w,h)
+                .set("transform", format!("translate({},{})",$x, $y))
+        }
+    }  
+}
+
+fn textoutput(input: &str) -> (String,String) {
+    let input = input.replace("KC_","");
+    let input = input.replace("MOD_","");
+    let (normal, shifted) =
+        match input.as_str() {
+            "NO"   => ("",""),
+            "EQL"  => ("=","+"),
+            "RGHT" => ("→",""),
+            "LEFT" => ("←",""),
+            "UP"   => ("↑",""),
+            "DOWN" => ("↓",""),
+            "COMM" => (",","<"),
+            "DOT"  => (".", ">"),
+            "QUOT" => ("'", "\""),
+            "MINS" => ("-", "_"),
+            "BSLS" => ("\\","|"),
+            "SLSH" => ("/","?"),
+            "GRV"  => ("`","~"),
+            "SCLN" => (";",":"),
+            "ENT" | "PENT" => ("⏎",""),
+            "LBRC" => ("[","{"),
+            "RBRC" => ("]","}"),
+            "SPC" => ("␣",""),
+            "0" => ("0",")"),
+            "1" => ("1","!"),
+            "2" => ("2","@"),
+            "3" => ("3","#"),
+            "4" => ("4","$"),
+            "5" => ("5","%"),
+            "6" => ("6","^"),
+            "7" => ("7","&"),
+            "8" => ("8","*"),
+            "9" => ("9","("),
+            "F1" => ("F1",""),
+            "F2" => ("F2",""),
+            "F3" => ("F3",""),
+            "F4" => ("F4",""),
+            "F5" => ("F5",""),
+            "F6" => ("F6",""),
+            "F7" => ("F7",""),
+            "F8" => ("F8",""),
+            "F9" => ("F9",""),
+            "F10" => ("F10",""),
+            "F11" => ("F11",""),
+            "F12" => ("F12",""),
+            "F13" => ("F13",""),
+            "F14" => ("F14",""),
+            "F15" => ("F15",""),
+            "F16" => ("F16",""),
+            "F17" => ("F17",""),
+            "F18" => ("F18",""),
+            "F19" => ("F19",""),
+            "F20" => ("F20",""),
+            "F21" => ("F21",""),
+            "F22" => ("F22",""),
+            "F23" => ("F23",""),
+            "F24" => ("F24",""),
+            x => (x  , "")
+        };
+
+    (String::from(normal), String::from(shifted))
+}
+
+fn cdata(input: String) -> String {
+    format!("<![CDATA[{}]]>",input)
+}
 
 macro_rules! addKeyText{
-    ($group:expr, $name:expr) => {
+    ($group:expr, $name:expr, $offset:expr) => {{
+        let (normal,shifted) = textoutput($name.as_ref());
         $group = $group.add(Text::new()
-                            .set("x", 10.0)
-                            .set("y", 10.0)
+                            .set("x",50.0)
+                            .set("y",$offset)
+                            .set("class","shifted")
+                            .add(TextContent::new(cdata(shifted))));
+        $group = $group.add(Text::new()
+                            .set("x", 50.0)
+                            .set("y", $offset+25.0)
                             .set("id", $name)
-                            .add(TextContent::new($name))
+                            .set("class","normal")
+                            .add(TextContent::new(cdata(normal)))
         ).set("id", $name)
+    }};    
+    ($group:expr, $name:expr) => {
+        addKeyText!($group, $name, 25.0)
     }
 }
 
@@ -86,19 +181,40 @@ impl Keyboard {
 
     fn keynode(&self, x: f64, y: f64, layer: usize, keyn: usize, shape: KeyShape) -> Group {
         let ref keycode = self.keymaps[layer][keyn];
-        let mut keygroup = match shape {
-            KeyShape::K10u => key10u(&keycode),
-            KeyShape::K15h => key15h(&keycode),
-            KeyShape::K15v => key15v(&keycode),
-            KeyShape::K20v => key20v(&keycode)
-        }.set("transform",format!("translate({},{})",x,y));
+        let mut keygroup = makeKeyGroup!(shape, keycode, x, y);
 
         match keycode {
             &Key::Fx(action) =>
                 match &self.actions[&action] {
-                    &Action::LayerSet(layer,ref s) => addLayer!(keygroup, layer),
-                    &Action::LayerMomentary(layer) => addMomentaryLayer!(keygroup,layer),
-                    &Action::LayerTapKey(layer,ref k) => addMomentaryLayer!(keygroup,layer),
+                    &Action::LayerSet(layer,ref s) => {
+                        addLayer!(keygroup, layer);
+                        addKeyText!(keygroup, format!("#{} {}",layer,s.as_str()))
+                    }
+                    &Action::LayerMomentary(layer) => {
+                        addMomentaryLayer!(keygroup,layer);
+                        addKeyText!(keygroup,format!("~{}",layer))
+                    } 
+                    &Action::LayerTapKey(layer,ref k) => {
+                        addMomentaryLayer!(keygroup,layer);
+                        let s = match k {
+                            &Key::Key(ref name) => name.as_str(),
+                            _ => "WHAT?"
+                        };
+                        addKeyText!(keygroup, s);
+                        addKeyText!(keygroup, format!("~L{}",layer), 50.0)
+                    }
+                    &Action::ModsTapKey(ref m, ref k) => {
+                        let modifier = match m {
+                            &Key::Key(ref name) => name.as_str(),
+                            _ => "HUH?"
+                        };
+                        let k = match k {
+                            &Key::Key(ref name) => name.as_str(),
+                            _ => "HRM.."
+                        };
+                        addKeyText!(keygroup,modifier,0.0);
+                        addKeyText!(keygroup,k,50.0);
+                    }
                     _ => ()
                 },
             &Key::Key(ref name) =>
