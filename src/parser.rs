@@ -75,7 +75,7 @@ fn keymaps() -> Parser<u8, Vec<Vec<Key>>> {
     seq(b"keymaps[]") * seq(b"[MATRIX_ROWS]") * seq(b"[MATRIX_COLS]") * whitespace()
         * sym(b'=') * whitespace()
         * sym(b'{') * whitespace()
-        * keymaps - whitespace() * sym(b',').opt() * whitespace() * seq(b"};")
+        * keymaps - whitespace() * sym(b',').opt() * whitespace() * seq(b"};").name("KEYMAP")
 }
 
 fn index() -> Parser<u8, u64> {
@@ -119,8 +119,8 @@ pub fn parse_file(filename: &Path) -> (KeyMapVec, ActionMap) {
     let act = (!actions() * skip(1)).repeat(0..) * actions();
     let mut input = DataInput::new(&buf);
     
-    (km.parse(&mut input).expect("Parsing keymaps failed"),
-     act.parse(&mut input).expect("Parsing actions failed"))
+    (km.parse(&mut input).expect(&format!("Parsing keymaps failed :: {:?}", input)),
+     act.parse(&mut input).expect(&format!("Parsing actions failed :: {:?}", input)))
 }
 
 #[test]

@@ -159,8 +159,11 @@ macro_rules! addKeyText{
 }
 
 macro_rules! addLayer {
+    ($group:expr, $layer:expr, $function:expr) => {
+        $group = $group.set("onclick", format!("{}({})",$function,$layer))
+    };
     ($group:expr, $layer:expr) => {
-        $group = $group.set("onclick", format!("templayeron({})",$layer))
+        addLayer!($group, $layer, "templayeron")
     }
 }
 
@@ -186,9 +189,9 @@ impl Keyboard {
         match keycode {
             &Key::Fx(action) =>
                 match &self.actions[&action] {
-                    &Action::LayerSet(layer,ref s) => {
-                        addLayer!(keygroup, layer);
-                        addKeyText!(keygroup, format!("#{} {}",layer,s.as_str()))
+                    &Action::LayerSet(layer,_) => {
+                        addLayer!(keygroup, layer, "onlylayer");
+                        addKeyText!(keygroup, format!("#{}",layer))
                     }
                     &Action::LayerMomentary(layer) => {
                         addMomentaryLayer!(keygroup,layer);
