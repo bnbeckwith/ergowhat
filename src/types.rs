@@ -17,7 +17,7 @@ pub enum Action{
     DefaultLayerSet(u64),
     // Turn on/off layer only
     LayerSet(u64, String),
-    // Turn on layer onlyl and clea all layers on release
+    // Turn on layer only and clear all layers on release
     LayerSetClear(u64),
     // Momentary layer setting
     LayerMomentary(u64),
