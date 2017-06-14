@@ -1,9 +1,10 @@
 [package]
 name = "ergowhat"
-version = "0.1.0"
+version = "0.8.0"
 authors = ["Ben Beckwith <bnbeckwith@gmail.com>"]
 
 [dependencies]
 clap="2.*"
 svg="*"
 pest="0.4"
+regex="*"

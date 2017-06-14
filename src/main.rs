@@ -1,7 +1,8 @@
+#![recursion_limit="128"]
 extern crate clap;
-#[macro_use]
-extern crate pest;
+#[macro_use] extern crate pest;
 extern crate svg;
+extern crate regex;
 
 use clap::{Arg, App};
 
@@ -33,7 +34,7 @@ fn main() {
     let keymap_file = matches.value_of("FILE").unwrap();
     let output_file = matches.value_of("OUTPUT").unwrap_or("keymap.svg");
 
-//    let (kms,am) = parse_file(&Path::new(keymap_file));
+    let (kms,am) = parse_file(&Path::new(keymap_file));
 
-//    Keyboard::new(kms,am).draw(output_file);
+    Keyboard::new(kms,am).draw(output_file);
 }

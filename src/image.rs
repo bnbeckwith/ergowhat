@@ -20,7 +20,7 @@ fn drawkey(width: f64, height: f64) -> Group {
         .set("ry", 15)
         .set("stroke","white")
         .set("fill","white");
-    
+
     let outside = Rectangle::new()
         .set("x", 1)
         .set("y", 1)
@@ -40,7 +40,7 @@ fn drawkey(width: f64, height: f64) -> Group {
         .set("ry", 10)
         .set("stroke", "#F9F9F9")
         .set("fill", "url(#keyinside)");
-    
+
     Group::new()
         .add(background)
         .add(outside)
@@ -67,7 +67,7 @@ macro_rules! makeKeyGroup {
             drawkey(w,h)
                 .set("transform", format!("translate({},{})",$x, $y))
         }
-    }  
+    }
 }
 
 fn textoutput(input: &str) -> (String,String) {
@@ -152,7 +152,7 @@ macro_rules! addKeyText{
                             .set("class","normal")
                             .add(TextContent::new(cdata(normal)))
         ).set("id", $name)
-    }};    
+    }};
     ($group:expr, $name:expr) => {
         addKeyText!($group, $name, 25.0)
     }
@@ -177,7 +177,7 @@ macro_rules! addMomentaryLayer{
 }
 
 impl Keyboard {
-    
+
     pub fn new(keymaps: KeyMapVec, actions: ActionMap) -> Keyboard {
         Keyboard{ keymaps: keymaps, actions: actions}
     }
@@ -188,47 +188,53 @@ impl Keyboard {
 
         match keycode {
             &Key::Fx(action) =>
-                match &self.actions[&action] {
-                    &Action::LayerSet(layer,_) => {
-                        addLayer!(keygroup, layer, "onlylayer");
-                        addKeyText!(keygroup, format!("#{}",layer))
+                match self.actions.get(&action) {
+                    Some(act) =>
+                        match act {
+                            &Action::LayerSet(layer,_) => {
+                                addLayer!(keygroup, layer, "onlylayer");
+                                addKeyText!(keygroup, format!("#{}",layer))
+                            }
+                            &Action::LayerMomentary(layer) => {
+                                addMomentaryLayer!(keygroup,layer);
+                                addKeyText!(keygroup,format!("~{}",layer))
+                            }
+                            &Action::LayerTapKey(layer,ref k) => {
+                                addMomentaryLayer!(keygroup,layer);
+                                let s = match k {
+                                    &Key::Key(ref name) => name.as_str(),
+                                    _ => "WHAT?"
+                                };
+                                addKeyText!(keygroup, s);
+                                addKeyText!(keygroup, format!("~L{}",layer), 50.0)
+                            }
+                            &Action::ModsTapKey(ref m, ref k) => {
+                                let modifier = match m {
+                                    &Key::Key(ref name) => name.as_str(),
+                                    _ => "HUH?"
+                                };
+                                let k = match k {
+                                    &Key::Key(ref name) => name.as_str(),
+                                    _ => "HRM.."
+                                };
+                                addKeyText!(keygroup,modifier,0.0);
+                                addKeyText!(keygroup,k,50.0);
+                            }
+                            _ => ()
+                        },
+                    None => {
+                        addKeyText!(keygroup, "BROKEN",0.0);
                     }
-                    &Action::LayerMomentary(layer) => {
-                        addMomentaryLayer!(keygroup,layer);
-                        addKeyText!(keygroup,format!("~{}",layer))
-                    } 
-                    &Action::LayerTapKey(layer,ref k) => {
-                        addMomentaryLayer!(keygroup,layer);
-                        let s = match k {
-                            &Key::Key(ref name) => name.as_str(),
-                            _ => "WHAT?"
-                        };
-                        addKeyText!(keygroup, s);
-                        addKeyText!(keygroup, format!("~L{}",layer), 50.0)
-                    }
-                    &Action::ModsTapKey(ref m, ref k) => {
-                        let modifier = match m {
-                            &Key::Key(ref name) => name.as_str(),
-                            _ => "HUH?"
-                        };
-                        let k = match k {
-                            &Key::Key(ref name) => name.as_str(),
-                            _ => "HRM.."
-                        };
-                        addKeyText!(keygroup,modifier,0.0);
-                        addKeyText!(keygroup,k,50.0);
-                    }
-                    _ => ()
-                },
+                }
+            ,
             &Key::Key(ref name) =>
             {
                 addKeyText!(keygroup, name.as_str());
             }
         }
-
         keygroup
     }
-    
+
     fn leftthumb(self: &Keyboard, layer: usize) -> Group {
     Group::new()
         .add(self.keynode(100.0,  0.0,layer,32,KeyShape::K10u))
@@ -346,7 +352,7 @@ impl Keyboard {
             .add(self.rightthumb(layer).set("transform", "translate(0,325)"))
             .set("transform","translate(1000,0)")
     }
-    
+
     fn layer(self: &Keyboard, layer: usize) -> Group {
         Group::new()
             .add(self.left(layer))
@@ -354,17 +360,17 @@ impl Keyboard {
             .set("id", format!("layer{}", layer))
             .set("visibility", "hidden")
     }
-    
+
     fn keymap(self: &Keyboard) -> Group {
         Range{start: 0, end: self.keymaps.len()}
             .fold(Group::new(),
                   |grp, i| grp.add(self.layer(i)))
     }
-    
+
     pub fn draw(self: &Keyboard, output: &str){
 
         let cdata = |s: &str| format!("<![CDATA[{}]]>",s);
-        
+
         let css = include_str!("data/keyboard.css");
 
         let style = Style::new(cdata(css));
@@ -372,7 +378,7 @@ impl Keyboard {
         let js = include_str!("data/keyboard.js");
 
         let code = Script::new(cdata(js));
-        
+
         let keyboard = self.keymap();
 
         let keyoutside = LinearGradient::new()
@@ -403,11 +409,11 @@ impl Keyboard {
             .add(Stop::new()
                  .set("offset", "100%")
                  .set("stop-color", "#D6D6D6"));
-        
+
         let defs = Definitions::new()
             .add(keyoutside)
             .add(keyinside);
-        
+
         let doc = Document::new()
             .set("viewBox", (0,0,2000,625))
             .add(style)
@@ -417,8 +423,5 @@ impl Keyboard {
 
         save(output, &doc).unwrap()
     }
-    
+
 }
-
-
-

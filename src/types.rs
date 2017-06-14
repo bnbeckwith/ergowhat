@@ -27,9 +27,9 @@ pub enum Action{
     LayerTapToggle(u64),
     // Toggle setting of layer
     LayerToggle(u64),
-    // Usually of the form (KEY | KEY)
-    // to press multiple
-    Mods(Key),
+    // // Usually of the form (KEY | KEY)
+    // // to press multiple
+    // Mods(Key),
     // Run these two keys together
     // The usual way is (modifier, key)
     ModsKey(Key, Key),
