@@ -1,11 +1,5 @@
 use pest::prelude::*;
-
-use std::path::Path;
-use std::fs::File;
-use std::io::prelude::*;
-
 use regex::Regex;
-
 use types::*;
 
 impl_rdp!{
@@ -150,10 +144,7 @@ fn parse_keymaps(input: StringInput) -> KeyMapVec {
     parser.keymapvec()
 }
 
-pub fn parse_file(filename: &Path) -> (KeyMapVec, ActionMap) {
-    let mut f = File::open(filename).expect("File couldn't be opened");
-    let mut input = String::new();
-    f.read_to_string(&mut input).expect("Unable to read file");
+pub fn parse_string(input: &str) -> (KeyMapVec, ActionMap) {
 
     // Strip out line comments
     let line_comment_re = Regex::new(r"//(.*)\n").unwrap();

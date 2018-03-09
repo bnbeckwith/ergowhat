@@ -1,0 +1,9 @@
+[package]
+name = "ergodox-keymap-parser"
+version = "0.8.0"
+authors = ["Ben Beckwith <bnbeckwith@gmail.com>"]
+
+[dependencies]
+svg="*"
+pest="0.4"
+regex="*"

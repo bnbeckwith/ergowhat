@@ -1,4 +1,4 @@
-use svg::{Document, save};
+use svg::Document;
 use svg::node::element::*;
 use svg::node::{Text as TextContent};
 
@@ -367,7 +367,7 @@ impl Keyboard {
                   |grp, i| grp.add(self.layer(i)))
     }
 
-    pub fn draw(self: &Keyboard, output: &str){
+    pub fn svg(self: &Keyboard) -> String {
 
         let cdata = |s: &str| format!("<![CDATA[{}]]>",s);
 
@@ -421,7 +421,6 @@ impl Keyboard {
             .add(defs)
             .add(keyboard);
 
-        save(output, &doc).unwrap()
+        doc.to_string()
     }
-
 }

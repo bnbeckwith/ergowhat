@@ -1,18 +1,12 @@
-#![recursion_limit="128"]
 extern crate clap;
-#[macro_use] extern crate pest;
-extern crate svg;
-extern crate regex;
+extern crate ergodox_keymap_parser;
 
 use clap::{Arg, App};
 
-mod types;
-mod parser;
-mod image;
-
-use image::*;
-use parser::*;
+use ergodox_keymap_parser::*;
 use std::path::Path;
+use std::fs::File;
+use std::io::prelude::*;
 
 fn main() {
     let matches = App::new("ergowhat")
@@ -34,7 +28,11 @@ fn main() {
     let keymap_file = matches.value_of("FILE").unwrap();
     let output_file = matches.value_of("OUTPUT").unwrap_or("keymap.svg");
 
-    let (kms,am) = parse_file(&Path::new(keymap_file));
-
-    Keyboard::new(kms,am).draw(output_file);
+    let mut f = File::open(Path::new(keymap_file)).expect("File couldn't be opened");
+    let mut input = String::new();
+    f.read_to_string(&mut input).expect("Unable to read file");
+    
+    let svg = to_svg(&input);
+    let mut output = File::create(Path::new(output_file)).unwrap();
+    output.write_all(&svg.into_bytes()).expect("Couldn't write file");
 }

@@ -1,0 +1,55 @@
+keymaps = { keymap_start ~ keymap_definition* ~ close_brace}
+keymap_start = _{ (!keymap_header ~ any)* ~ keymap_header ~ "=" ~ open_brace }
+keymap_header = _{ "keymaps[][MATRIX_ROWS][MATRIX_COLS]" }
+keymap_definition = { keymap ~ separator? }
+keymap = { "KEYMAP" ~ "(" ~ key_entry* ~ ")"}
+key_entry = { (key ~ separator?) }
+
+fn_actions = _{ (!fn_action_header ~ any)* ~ fn_action_header ~ open_brace ~ action_definition* ~ close_brace }
+fn_action_header = _{ "fn_actions[]" ~ "=" }
+open_brace = _{ "{" }
+close_brace = _{ "}"}
+action_definition = _{ action ~ separator? }
+action = { index ~ "=" ~ action_type }
+action_type = _{
+    action_function
+  | action_function_tap
+  | action_layer_momentary
+  | action_layer_set
+  | action_layer_set_clear
+  | action_layer_toggle
+  | action_layer_tap_toggle
+  | action_default_layer_set
+  | action_layer_tap_key
+  | action_mods_key
+  | action_mods_tap_key
+}
+action_function = {"ACTION_FUNCTION(" ~ key  ~ ")" }
+action_function_tap = {"ACTION_FUNCTION_TAP(" ~ key ~ ")" }
+action_layer_momentary = {"ACTION_LAYER_MOMENTARY(" ~ integer ~ ")" }
+action_layer_set = {"ACTION_LAYER_SET(" ~ integer ~ separator ~ named_key ~ ")" }
+action_layer_set_clear = {"ACTION_LAYER_SET_CLEAR(" ~ integer ~ ")" }
+action_layer_toggle = {"ACTION_LAYER_TOGGLE(" ~ integer ~ ")" }
+action_layer_tap_toggle = {"ACTION_LAYER_TAP_TOGGLE(" ~ integer ~ ")" }
+action_default_layer_set = {"ACTION_DEFAULT_LAYER_SET(" ~ integer ~ ")" }
+action_layer_tap_key = {"ACTION_LAYER_TAP_KEY(" ~ integer ~ separator ~ key ~ ")" }
+action_mods_key = {"ACTION_MODS_KEY(" ~ key ~ separator ~ key ~ ")" }
+action_mods_tap_key = {"ACTION_MODS_TAP_KEY(" ~ key ~ separator ~ key ~ ")" }
+
+separator = _{","}
+
+comment = _{ block_comment_start ~ (!block_comment_end ~ any)* ~ block_comment_end}
+block_comment_start  = _{ "/*" }
+block_comment_end = _{ "*/" }
+key = _{ fn_key | named_key }
+fn_key = { "FN" ~ action_id }
+named_key = @{ identifier+ }
+identifier = _{ (upper|lower|digit|"_")}
+action_id = { digit+ }
+index = _{ "" ~ integer ~ "" }
+lower = _{ 'a'..'z' }
+upper = _{ 'A'..'Z' }
+digit = _{ '0'..'9'}
+integer = { "0" | '1'..'9' ~ digit* }
+
+whitespace = _{ " " | "\t" | "\n" }
