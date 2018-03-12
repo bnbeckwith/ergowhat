@@ -1,7 +1,6 @@
-#![recursion_limit="128"]
-#[macro_use]
 extern crate pest;
-//extern crate pest_derive;
+#[macro_use]
+extern crate pest_derive;
 extern crate svg;
 extern crate regex;
 

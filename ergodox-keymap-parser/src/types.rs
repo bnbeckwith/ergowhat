@@ -3,7 +3,7 @@ use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
 pub enum Key {
-    Fx(u64),
+    Fx(u32),
     Key(String)
 }
 
@@ -14,19 +14,19 @@ pub enum Action{
     // Tappable function
     FunctionTap(Key),
     // Sets a layer that is always valid
-    DefaultLayerSet(u64),
+    DefaultLayerSet(u32),
     // Turn on/off layer only
-    LayerSet(u64, String),
+    LayerSet(u32, String),
     // Turn on layer only and clear all layers on release
-    LayerSetClear(u64),
+    LayerSetClear(u32),
     // Momentary layer setting
-    LayerMomentary(u64),
+    LayerMomentary(u32),
     // Turns on momentary `layer` while holding, but key if tapping
-    LayerTapKey(u64, Key),
+    LayerTapKey(u32, Key),
     // Turn on layer momentarily and toggles it on taps
-    LayerTapToggle(u64),
+    LayerTapToggle(u32),
     // Toggle setting of layer
-    LayerToggle(u64),
+    LayerToggle(u32),
     // // Usually of the form (KEY | KEY)
     // // to press multiple
     // Mods(Key),
@@ -40,7 +40,7 @@ pub enum Action{
 
 pub type KeyMap    = Vec<Key>;
 pub type KeyMapVec = Vec<KeyMap>;
-pub type ActionMap = HashMap<u64, Action>;
+pub type ActionMap = HashMap<u32, Action>;
 
 impl fmt::Display for Key {
     fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {

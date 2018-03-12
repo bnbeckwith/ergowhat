@@ -1,9 +1,9 @@
 keymaps = { keymap_start ~ keymap_definition* ~ close_brace}
 keymap_start = _{ (!keymap_header ~ any)* ~ keymap_header ~ "=" ~ open_brace }
 keymap_header = _{ "keymaps[][MATRIX_ROWS][MATRIX_COLS]" }
-keymap_definition = { keymap ~ separator? }
+keymap_definition = _{ keymap ~ separator? }
 keymap = { "KEYMAP" ~ "(" ~ key_entry* ~ ")"}
-key_entry = { (key ~ separator?) }
+key_entry = _{ (key ~ separator?) }
 
 fn_actions = _{ (!fn_action_header ~ any)* ~ fn_action_header ~ open_brace ~ action_definition* ~ close_brace }
 fn_action_header = _{ "fn_actions[]" ~ "=" }
@@ -46,7 +46,7 @@ fn_key = { "FN" ~ action_id }
 named_key = @{ identifier+ }
 identifier = _{ (upper|lower|digit|"_")}
 action_id = { digit+ }
-index = _{ "" ~ integer ~ "" }
+index = _{ "[" ~ integer ~ "]" }
 lower = _{ 'a'..'z' }
 upper = _{ 'A'..'Z' }
 digit = _{ '0'..'9'}
