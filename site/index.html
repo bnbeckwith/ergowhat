@@ -12,24 +12,22 @@
           var fileSelected = document.getElementById('filetoread');
           fileSelected.addEventListener('change', function (e) { 
             var fileTobeRead = fileSelected.files[0];
-
+            
             var fileReader = new FileReader(); 
             fileReader.onload = function (e) { 
-              var fileContents = document.getElementById('keymap'); 
-              fileContents.innerHTML = Ergodox.svg(fileReader.result);
-              layer0on();
+              make_svg(fileReader.result);
             } 
             fileReader.readAsText(fileTobeRead); 
           }, false);
         }
         else { 
           alert("Files are not supported"); 
-        } 
+        }
       }
     </script>
   </head>
   <body>
-    <div>
+    <div id="fileselect">
       Please select text file: <input name="" type="file" value="" id="filetoread"/>
     </div>
     <div id="keymap"></div>

@@ -1,4 +1,17 @@
-// Much of this is borrowed from HelloRust
+
+// Copied from
+// https://css-tricks.com/snippets/javascript/get-url-variables/
+// Thanks!
+function getQueryVariable(variable)
+{
+       var query = window.location.search.substring(1);
+       var vars = query.split("&");
+       for (var i=0;i<vars.length;i++) {
+               var pair = vars[i].split("=");
+               if(pair[0] == variable){return pair[1];}
+       }
+       return(false);
+}
 
 function fetchAndInstantiate(url, importObject) {
   return fetch(url).then(response =>
@@ -72,6 +85,12 @@ var Ergodox = {
   }
 };
 
+function make_svg(src) {
+  var fileContents = document.getElementById('keymap');
+  fileContents.innerHTML = Ergodox.svg(src);
+  layer0on();
+}
+
 fetchAndInstantiate("ergoweb.wasm", {})
   .then(mod => {
     Module.alloc       = mod.exports.alloc;
@@ -79,4 +98,13 @@ fetchAndInstantiate("ergoweb.wasm", {})
     Module.dealloc_str = mod.exports.dealloc_str;
     Module.memory      = mod.exports.memory;
     Module.svg         = mod.exports.svg;
+  })
+  .then(function() {
+    var km = getQueryVariable("km");
+    if(km) {
+      fetch(km)
+        .then(response => response.text() )
+        .then(txt => make_svg(txt));
+    }
   });
+
