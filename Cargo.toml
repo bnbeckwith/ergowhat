@@ -1,11 +1,6 @@
-[package]
-name = "ergowhat"
-version = "0.8.0"
-authors = ["Ben Beckwith <bnbeckwith@gmail.com>"]
-
-
 [workspace]
-
-[dependencies]
-ergodox-keymap-parser = { path = "ergodox-keymap-parser"}
-clap="2.*"
+members = [
+    "ergodox-keymap-parser",
+    "ergowhat",
+    "ergoweb"
+]

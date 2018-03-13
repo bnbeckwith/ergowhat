@@ -1,6 +1,9 @@
 extern crate clap;
 extern crate ergodox_keymap_parser;
 
+use std::ffi::{CString, CStr};
+use std::os::raw::c_char;
+
 use clap::{Arg, App};
 
 use ergodox_keymap_parser::*;
@@ -35,4 +38,15 @@ fn main() {
     let svg = to_svg(&input);
     let mut output = File::create(Path::new(output_file)).unwrap();
     output.write_all(&svg.into_bytes()).expect("Couldn't write file");
+}
+
+
+#[no_mangle]
+pub extern "C" fn svg(data: *mut c_char) -> *mut c_char {
+    unsafe {
+        let input = CStr::from_ptr(data);
+        let svg = to_svg(input.to_str().unwrap());
+        let s = CString::new(svg).unwrap();
+        s.into_raw()
+    }
 }

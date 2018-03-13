@@ -54,6 +54,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "ergoweb"
+version = "0.8.0"
+dependencies = [
+ "ergodox-keymap-parser 0.8.0",
+]
+
+[[package]]
 name = "ergowhat"
 version = "0.8.0"
 dependencies = [
