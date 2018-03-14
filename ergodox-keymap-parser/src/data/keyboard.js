@@ -16,11 +16,11 @@ function onlylayer(layer){
   }
 }
 
-function templayeron(layer) {
+function layeron(layer) {
   document.getElementById("layer" + layer).setAttribute('visibility','visible')
 }
 
-function templayeroff(layer) {
+function layeroff(layer) {
   document.getElementById("layer" + layer).setAttribute('visibility','hidden')
 }
 

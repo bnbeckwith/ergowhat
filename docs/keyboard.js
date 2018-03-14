@@ -16,18 +16,18 @@ function onlylayer(layer){
   }
 }
 
-function templayeron(layer) {
+function layer0on(layer) {
+  layeron(0);
+}
+
+function layeron(layer) {
   document.getElementById("layer" + layer).setAttribute('visibility','visible')
 }
 
-function templayeroff(layer) {
+function layeroff(layer) {
   document.getElementById("layer" + layer).setAttribute('visibility','hidden')
 }
 
-function layer0on() {
-  document.getElementById("layer0").setAttribute('visibility','visible')
-}
-
 window.onload = function(){
-  layer0on();
+  document.getElementById("layer0").setAttribute('visibility','visible');  
 }

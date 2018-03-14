@@ -100,9 +100,11 @@ fetchAndInstantiate("ergoweb.wasm", {})
     Module.svg         = mod.exports.svg;
   })
   .then(function() {
-    var km = getQueryVariable("km");
+    var km = getQueryVariable("kmurl");
     if(km) {
-      fetch(km)
+      kmurl = decodeURIComponent(km);
+      document.getElementById('urltoread').value = kmurl;
+      fetch(kmurl)
         .then(response => response.text() )
         .then(txt => make_svg(txt));
     }

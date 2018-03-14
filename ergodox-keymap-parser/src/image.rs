@@ -163,16 +163,16 @@ macro_rules! addLayer {
         $group = $group.set("onclick", format!("{}({})",$function,$layer))
     };
     ($group:expr, $layer:expr) => {
-        addLayer!($group, $layer, "templayeron")
+        addLayer!($group, $layer, "layeron")
     }
 }
 
 macro_rules! addMomentaryLayer{
     ($group:expr, $layer:expr) => {
         $group = $group.set("onmousedown",
-                            format!("templayeron({})",$layer))
+                            format!("layeron({})",$layer))
             .set("onmouseup",
-                 format!("templayeroff({})",$layer))
+                 format!("layeroff({})",$layer))
     }
 }
 
@@ -192,8 +192,12 @@ impl Keyboard {
                     Some(act) =>
                         match act {
                             &Action::LayerSet(layer,_) => {
-                                addLayer!(keygroup, layer, "onlylayer");
+                                addLayer!(keygroup, layer, "layeron");
                                 addKeyText!(keygroup, format!("#{}",layer))
+                            }
+                            &Action::LayerSetClear(layer) => {
+                                addLayer!(keygroup, layer, "onlylayer");
+                                addKeyText!(keygroup, format!("#{}!",layer))
                             }
                             &Action::LayerMomentary(layer) => {
                                 addMomentaryLayer!(keygroup,layer);

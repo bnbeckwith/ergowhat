@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8"/>
+    <title>Document</title>
+    <script src="keyboard.js"></script>
+    <script src="code.js"></script>
+    <script>
+      window.onload = function () { 
+        //Check the support for the File API support 
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+          var fileSelected = document.getElementById('filetoread');
+          fileSelected.addEventListener('change', function (e) { 
+            var fileTobeRead = fileSelected.files[0];
+            
+            var fileReader = new FileReader(); 
+            fileReader.onload = function (e) { 
+              make_svg(fileReader.result);
+            } 
+            fileReader.readAsText(fileTobeRead); 
+          }, false);
+        }
+        else { 
+          alert("Files are not supported"); 
+        }
+      }
+    </script>
+    <style type="text/css">
+      body {
+        background: #eee;
+        font-family: sans-serif;
+      }
+
+      .container {
+      display: grid;
+      grid-template-columns: 50px auto auto 50px;
+      grid-template-rows: 100px auto;
+      grid-template-areas: "lbuffer file url rbuffer"
+                           "lbuffer keyboard keyboard rbuffer";
+      }
+
+      #fileselect {
+      grid-area: file;
+      align-self: center;
+      justify-self: center;
+      }
+
+      #urlform {
+      grid-area: url;
+      align-self: center;
+      justify-self: center;
+      }
+
+      #keymap {
+        grid-area: keyboard;
+      }
+      
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div id="fileselect">
+        <label for="filetoread">Local file:</label>
+        <input name="local_file" type="file" value="" id="filetoread"/>
+      </div>        
+      <form id="urlform">
+        <div id="urlselect">
+          <label for="urltoread">Url:</label>
+          <input name="kmurl" type="text" value="" id="urltoread"/>
+        </div>
+        <div class="button">
+          <button type=submit id="urlgo">Get keymap</button>
+        </div>
+      </form>
+
+      <div id="keymap">
+        Spinner here
+      </div>
+      
+    </div>
+  </body>
+</html>
