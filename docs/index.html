@@ -3,80 +3,63 @@
   <head>
     <meta charset="UTF-8"/>
     <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="style.css" />
     <script src="keyboard.js"></script>
     <script src="code.js"></script>
     <script>
-      window.onload = function () { 
-        //Check the support for the File API support 
+      window.onload = function () {
+        //Check the support for the File API support
         if (window.File && window.FileReader && window.FileList && window.Blob) {
           var fileSelected = document.getElementById('filetoread');
-          fileSelected.addEventListener('change', function (e) { 
+          fileSelected.addEventListener('change', function (e) {
+            toggle_spinner();
             var fileTobeRead = fileSelected.files[0];
-            
-            var fileReader = new FileReader(); 
-            fileReader.onload = function (e) { 
+
+            var fileReader = new FileReader();
+            fileReader.onload = function (e) {
               make_svg(fileReader.result);
-            } 
-            fileReader.readAsText(fileTobeRead); 
+              var label = fileSelected.nextElementSibling;
+              label.innerHTML = fileTobeRead.name;
+            }
+            fileReader.readAsText(fileTobeRead);
           }, false);
         }
-        else { 
-          alert("Files are not supported"); 
+        else {
+          alert("Files are not supported");
         }
       }
     </script>
-    <style type="text/css">
-      body {
-        background: #eee;
-        font-family: sans-serif;
-      }
-
-      .container {
-      display: grid;
-      grid-template-columns: 50px auto auto 50px;
-      grid-template-rows: 100px auto;
-      grid-template-areas: "lbuffer file url rbuffer"
-                           "lbuffer keyboard keyboard rbuffer";
-      }
-
-      #fileselect {
-      grid-area: file;
-      align-self: center;
-      justify-self: center;
-      }
-
-      #urlform {
-      grid-area: url;
-      align-self: center;
-      justify-self: center;
-      }
-
-      #keymap {
-        grid-area: keyboard;
-      }
-      
-    </style>
   </head>
   <body>
     <div class="container">
-      <div id="fileselect">
-        <label for="filetoread">Local file:</label>
-        <input name="local_file" type="file" value="" id="filetoread"/>
-      </div>        
-      <form id="urlform">
-        <div id="urlselect">
-          <label for="urltoread">Url:</label>
-          <input name="kmurl" type="text" value="" id="urltoread"/>
+      <div class="flat-form">
+        <input id="filetab" name="tabs" type="radio" class="tab" checked/>
+        <label for="filetab" class="tab">File</label>
+        <input id="urltab" name="tabs" type="radio" class="tab"/>
+        <label for="urltab" class="tab">URL</label>
+        <div id="filesection" class="form-action">
+          <h1>Upload a Keymap</h1>
+          <p>Select a local file and upload to see your interactive
+            keymap.</p>
+          <form>
+            <input name="local_file" type="file" id="filetoread" class="flat-button"/>
+            <label for="filetoread" class="flat-button">Upload file</label>
+          </form>
         </div>
-        <div class="button">
-          <button type=submit id="urlgo">Get keymap</button>
-        </div>
-      </form>
 
-      <div id="keymap">
-        Spinner here
+        <div id="urlsection" class="form-action">
+          <h1>Parse a URL</h1>
+          <p>Provide a url to a keymap and parse it to generate an
+            interactive keymap. If you need an example to try, use <a href="/?fileurl=https://raw.githubusercontent.com/bnbeckwith/tmk_keyboard/bnb_layout/keyboard/ergodox/keymap_bnb.c">my layout</a>.</p>
+          <form action="">
+            <input name="fileurl" type="text" id="urlname" placeholder="Url here"/>
+            <button type=submit id="urlgo" class="flat-button">Get keymap</button>
+          </form>
+        </div>
       </div>
-      
+      <div id="keymap">
+      </div>
+      <span id="spinny" class="spinner-dot-in spinny"></span>
     </div>
   </body>
 </html>

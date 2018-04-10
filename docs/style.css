@@ -1,0 +1,200 @@
+body {
+    color: #555;
+    background: #eee;
+    font-family: sans-serif;
+}
+
+.container {
+    display: grid;
+    align-items: stretch;
+    grid-template-columns: 50px auto 58px auto 50px;
+    grid-template-rows: auto auto auto;
+    grid-template-areas: "lbuffer blank1 spinny blank2 rbuffer"
+                             "lbuffer keyboard keyboard keyboard rbuffer"
+                             "lbuffer form form form rbuffer";
+}
+
+#filetoread {
+    width: 0.1px;
+    height: 0.1px;
+    opacity: 0;
+    overflow: hidden;
+    position: absolute;
+    z-index: -1;
+}
+
+#urlform {
+    align-self: center;
+    justify-self: center;
+    flex-direction: row;
+    font-size: 1.25em;
+    font-weight: 700;
+}
+
+#keymap {
+    grid-area: keyboard;
+}
+
+.flat-form {
+    grid-area: form;
+    background: white;
+    color: #555;
+    margin: 25px auto;
+    padding: 10px;
+    width: 420px;
+    height: 320px;
+    position: relative;
+}
+
+input.tab {
+    display: none;
+}
+
+label.tab {
+    display: inline-block;
+    margin: 0 0 -1px;
+    padding: 15px 25px;
+    font-weight: 600;
+    text-align: center;
+    color: #bbb;
+    border: 1px solid transparent;
+}
+
+input.tab:checked + label {
+    color: #555;
+    border: 1px solid #ddd;
+    border-top: 2px solid #8d4ca7;
+    border-bottom: 1px solid #fff;
+}
+
+#filetab:checked ~ #filesection,
+#urltab:checked ~ #urlsection {
+    display: block;
+}
+
+.form-action {
+    padding: 20px 0 20px;
+    display: none;
+    border-top: 1px solid #ddd;
+}
+
+.flat-form h1 {
+    font-size: 28px;
+    padding-bottom: 10px;
+}
+
+.flat-form p {
+    font-size: 12px;
+    padding-bottom: 10px;
+    line-height: 25px;
+}
+
+.flat-form form input {
+    padding: 0;
+    border: none;
+    border-bottom: 1px solid #8d4ca7;
+    width: 100%;
+    background: #fff;
+    color: #8d4ca7;
+    height: 20px;
+    margin-bottom: 10px;
+}
+
+.flat-button {
+  position: relative;
+  vertical-align: top;
+  width: 100%;
+  height: 50px;
+  padding: 0;
+  font-size: 28px;
+  color: white;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  background: #9b59b6;
+  border: 0;
+  border-bottom: 2px solid #8d4ca7;
+  cursor: pointer;
+  box-shadow: inset 0 -2px #8d4ca7;
+}
+
+.flat-button:active {
+  top: 1px;
+  outline: none;
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+
+#keymap {
+    margin-top: 10px
+}
+
+label.flat-button {
+    display: inline-block;
+    padding-top: 5px;
+}
+
+::-webkit-input-placeholder {
+   font-style: italic;
+}
+:-moz-placeholder {
+   font-style: italic;
+}
+::-moz-placeholder {
+   font-style: italic;
+}
+:-ms-input-placeholder {
+   font-style: italic;
+}
+
+// spinner from https://codepen.io/zessx/pen/RNPKKK
+.spinner-dot-in{
+  display: block;
+  float: left;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3.125px solid #aaa;
+  animation: spinner 1.2s linear infinite;
+}
+
+@keyframes spinner {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.spinner-holder {
+    margin: auto;
+}
+
+/* Dots */
+.spinner-dot-in{
+    position: relative;
+}
+
+.spinner-dot-in:before {
+  content: '';
+  position: absolute;
+  top: 6.25px;
+  left: 21.875px;
+  width: 6.25px;
+  height: 6.25px;
+  border-radius: 50%;
+  background: #8d4ca7;
+}
+
+.spinner-dot-in:after {
+  top: auto;
+  bottom: 6.25px;
+}
+
+.spinner-dot-in:after {
+  display: none;
+}
+
+.spinny {
+    grid-area: spinny;
+    display: none;
+}

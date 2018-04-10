@@ -1,4 +1,3 @@
-
 // Copied from
 // https://css-tricks.com/snippets/javascript/get-url-variables/
 // Thanks!
@@ -89,6 +88,21 @@ function make_svg(src) {
   var fileContents = document.getElementById('keymap');
   fileContents.innerHTML = Ergodox.svg(src);
   layer0on();
+  toggle_spinner();
+}
+
+function toggle_spinner() {
+  var spinner = document.getElementById("spinny");
+  if (spinner.style.display == "block") {
+    spinner.style.display = "none";
+  }else {
+    spinner.style.display = "block";
+  }
+}
+
+function select_url_tab(){
+  var utab = document.getElementById("urltab");
+  utab.checked = true;
 }
 
 fetchAndInstantiate("ergoweb.wasm", {})
@@ -100,13 +114,14 @@ fetchAndInstantiate("ergoweb.wasm", {})
     Module.svg         = mod.exports.svg;
   })
   .then(function() {
-    var km = getQueryVariable("kmurl");
+    var km = getQueryVariable("fileurl");
     if(km) {
+      select_url_tab();
+      toggle_spinner();
       kmurl = decodeURIComponent(km);
-      document.getElementById('urltoread').value = kmurl;
+      document.getElementById('urlname').value = kmurl;
       fetch(kmurl)
         .then(response => response.text() )
         .then(txt => make_svg(txt));
     }
   });
-
