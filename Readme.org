@@ -1,0 +1,30 @@
+Try it out here: [[http://bnbeckwith.com/ergowhat]]
+
+* What?
+
+  This is a [[https://github.com/tmk/tmk_keyboard][tmk_keyboard-style]] parser for [[https://www.ergodox.io/][ergodox]] keyboards.
+
+* Why?
+
+  When you have a sweet sweet keyboard setup and you need to remember
+  all of your awesomeness without reading a layout file, its nice to
+  have an interactive map of your brilliance. At least, thats the
+  intent. In reality, you can find the bugs that you missed and
+  confusing layouts you produced for your infinitely configurable
+  keyboard that no one else can use unless you have the keys labeled
+  and set to QWERTY.
+
+* But why rust?
+
+  Aha, yes, the Rust question. Would you believe performance? No, I
+  suppose not. How about the fact that it is impossible to do parsing
+  in any other language? Nah, I didn't think so either.
+
+  But, maybe you would believe that I needed a toy to use to learn and
+  understand Rust better. It does a great job making a library with
+  supporting command-line applications or wasm blobs.
+
+* Is it complete?
+
+  Yes, it parses my keymap so by definition it is working according to
+  specification.
