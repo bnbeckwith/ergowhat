@@ -1,3 +1,4 @@
 target/
 **/*.rs.bk
 keymap_cub.c
+docs/node_modules

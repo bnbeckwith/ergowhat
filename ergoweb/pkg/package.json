@@ -1,0 +1,16 @@
+{
+  "name": "ergoweb",
+  "collaborators": [
+    "Ben Beckwith <bnbeckwith@gmail.com>"
+  ],
+  "description": null,
+  "version": "0.8.0",
+  "license": null,
+  "repository": null,
+  "files": [
+    "ergoweb_bg.wasm",
+    "ergoweb.d.ts"
+  ],
+  "main": "ergoweb.js",
+  "types": "ergoweb.d.ts"
+}
